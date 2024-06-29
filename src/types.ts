@@ -100,7 +100,7 @@ export type PrismEditor = {
 	readonly tokens: TokenStream
 	/**
 	 * Adds a listener for editor events with the specified name.
-	 * @returns A cleanup funciton that removes the listener.
+	 * @returns A cleanup function that removes the listener.
 	 */
 	on<T extends keyof EditorEventMap>(this: void, name: T, listener: EditorEventMap[T]): () => void
 	/** Forces the editor to update. Can be useful after modifying a grammar for example. */
