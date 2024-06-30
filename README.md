@@ -64,9 +64,11 @@ import "prism-react-editor/themes/github-dark.css"
 import "prism-react-editor/search.css"
 
 function MyEditor() {
-  return <Editor language="jsx" value="const foo = 'bar'">
-    {editor => <BasicSetup editor={editor} />}
-  </Editor>
+  return (
+    <Editor language="jsx" value="const foo = 'bar'">
+      {editor => <BasicSetup editor={editor} />}
+    </Editor>
+  )
 }
 ```
 
@@ -84,6 +86,7 @@ function MyEditor() {
 | `rtl`               | `boolean`                                                                             | Whether the editor uses right to left directionality. Defaults to `false`. Requires extra CSS from `prism-react-editor/rtl-layout.css` to work.                                             |
 | `style`             | `Omit<React.CSSProperties, "tabSize">`                                                | Allows adding inline styles to the container element.                                                                                                                                       |
 | `textareaProps`     | `Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, OmittedTextareaProps>`       | Allows adding props to the editor's textarea element. [Unsupported props](https://github.com/FIameCaster/prism-react-editor/blob/9b8fe37a01b1376b25a3f6aa95573ca9d7bcc816/src/types.ts#L41) |
+| `ref`               | `React.ForwardedRef<PrismEditor>`                                                     | Ref allowing access to the editor instance.                                                                                                                                                 |
 | `onUpdate`          | `(value: string, editor: PrismEditor) => void`                                        | Function called after the editor updates.                                                                                                                                                   |
 | `onSelectionChange` | `(selection: InputSelection, value: string, editor: PrismEditor) => void`             | Function called when the editor's selection changes.                                                                                                                                        |
 | `onTokenize`        | `(tokens: TokenStream, language: string, value: string, editor: PrismEditor) => void` | Function called before the tokens are stringified to HTML.                                                                                                                                  |
@@ -194,7 +197,6 @@ function MyEditor() {
     </Editor>
   )
 }
-
 ```
 
 ### Creating your own
