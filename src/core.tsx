@@ -65,21 +65,6 @@ const Editor = memo(
 			}
 		}
 
-		// Safari focuses the textarea if you change its selection or value programmatically
-		const focusRelatedTarget = () =>
-			isWebKit &&
-			!focused &&
-			addTextareaListener(
-				editor,
-				"focus",
-				e => {
-					let relatedTarget = e.relatedTarget as HTMLElement
-					if (relatedTarget) relatedTarget.focus()
-					else (e.target as HTMLElement).blur()
-				},
-				{ once: true },
-			)
-
 		const dispatchEvent = <T extends keyof EditorEventMap>(
 			name: T,
 			...args: Parameters<EditorEventMap[T]>
@@ -164,11 +149,6 @@ const Editor = memo(
 					},
 					update,
 					getSelection: getInputSelection,
-					setSelection(start, end = start, direction) {
-						focusRelatedTarget()
-						textarea.setSelectionRange(start, end, direction)
-						updateSelection(true)
-					},
 				} as PrismEditor),
 			[],
 		)
@@ -216,9 +196,11 @@ const Editor = memo(
 			useCallback(() => {
 				const { value: newVal, language: newLang } = editor.props
 				if (newVal != prevVal) {
-					focusRelatedTarget()
+					// Safari focuses the textarea when changing its value or selection when it's in the DOM
+					if (!focused) textarea.remove()
 					textarea.value = prevVal = newVal
 					textarea.selectionEnd = 0
+					if (!focused) lines[0].prepend(textarea)
 				}
 				language = newLang
 				update()
@@ -289,11 +271,6 @@ const addTextareaListener = <T extends keyof HTMLElementEventMap>(
 	return () => editor.textarea?.removeEventListener(type, listener, options)
 }
 
-const userAgent = navigator.userAgent
-const isMac = /Mac|iPhone|iPod|iPad/i.test(navigator.platform)
-const isChrome = /Chrome\//.test(userAgent)
-const isWebKit = !isChrome && /AppleWebKit\//.test(userAgent)
-
 /**
  * Counts number of lines in the string between `start` and `end`.
  * If start and end are excluded, the whole string is searched.
@@ -306,7 +283,7 @@ const numLines = (str: string, start = 0, end = Infinity) => {
 
 document.addEventListener("selectionchange", () => selectionChange?.())
 
-let selectionChange: null | (() => void)
+let selectionChange: null | ((force?: true) => void)
 let handleSelectionChange = true
 
 export {
@@ -314,8 +291,6 @@ export {
 	addTextareaListener,
 	preventDefault,
 	languageMap,
-	isMac,
-	isChrome,
-	isWebKit,
+	selectionChange,
 	numLines,
 }

@@ -107,14 +107,6 @@ export type PrismEditor = {
 	update(this: void): void
 	/** Gets the `selectionStart`, `selectionEnd` and `selectionDirection` for the `textarea`. */
 	getSelection(this: void): InputSelection
-	/**
-	 * Sets the selection for the `textarea` and synchronously runs the selectionChange listeners.
-	 * If you don't want to synchronously run the listeners, use `textarea.setSelectionRange` instead.
-	 * @param start New selectionStart.
-	 * @param end New selectionEnd. Defaults to `start`.
-	 * @param direction New direction.
-	 */
-	setSelection(this: void, start: number, end?: number, direction?: "backward" | "forward" | "none"): void
 }
 
 export type CommentTokens = {

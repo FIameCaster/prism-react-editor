@@ -23,6 +23,8 @@ This is a rewrite of [Prism code editor](https://github.com/FIameCaster/prism-co
     - [DOM Elements](#dom-elements)
   - [Methods](#methods)
   - [Extensions property](#extensions-property)
+- [Utilities](#utilities)
+- [Prism](#prism)
 - [Languages](#languages)
 - [Styling](#styling)
   - [Themes](#themes)
@@ -85,7 +87,7 @@ function MyEditor() {
 | `value`             | `string`                                                                              | Initial value to display in the editor.                                                                                                                                                     |
 | `rtl`               | `boolean`                                                                             | Whether the editor uses right to left directionality. Defaults to `false`. Requires extra CSS from `prism-react-editor/rtl-layout.css` to work.                                             |
 | `style`             | `Omit<React.CSSProperties, "tabSize">`                                                | Allows adding inline styles to the container element.                                                                                                                                       |
-| `textareaProps`     | `React.TextareaHTMLAttributes`                                   | Allows adding props to the editor's textarea element. [Unsupported props](https://github.com/FIameCaster/prism-react-editor/blob/9b8fe37a01b1376b25a3f6aa95573ca9d7bcc816/src/types.ts#L41) |
+| `textareaProps`     | `React.TextareaHTMLAttributes`                                                        | Allows adding props to the editor's textarea element. [Unsupported props](https://github.com/FIameCaster/prism-react-editor/blob/9b8fe37a01b1376b25a3f6aa95573ca9d7bcc816/src/types.ts#L41) |
 | `ref`               | `React.ForwardedRef<PrismEditor>`                                                     | Ref allowing access to the editor instance.                                                                                                                                                 |
 | `onUpdate`          | `(value: string, editor: PrismEditor) => void`                                        | Function called after the editor updates.                                                                                                                                                   |
 | `onSelectionChange` | `(selection: InputSelection, value: string, editor: PrismEditor) => void`             | Function called when the editor's selection changes.                                                                                                                                        |
@@ -279,6 +281,10 @@ Multiple extensions have an entry on `editor.extensions` allowing you to interac
 - `searchWidget: SearchWidget`: Allows you to open or close the search widget.
 - `history: EditHistory`: Allows you to clear the history or navigate it.
 - `folding: ReadOnlyCodeFolding`: Allows access to the full unfolded code and to toggle folded ranges.
+
+## Utilities
+
+The `prism-react-editor/utils` entry point exports various utilities for inserting text, changing the selection, finding token elements and more.
 
 ## Prism
 

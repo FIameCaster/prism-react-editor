@@ -3,7 +3,7 @@ import { addTextareaListener } from "../../core"
 import { PrismEditor } from "../../types"
 import { SearchAPI, useEditorSearch } from "./search"
 import { scrollToEl } from "../../utils/local"
-import { insertText } from "../../utils"
+import { insertText, setSelection } from "../../utils"
 
 /**
  * Object with methods useful for performing a search
@@ -104,11 +104,9 @@ export const useEditorReplace = (
 				closest,
 				selectMatch(index: number, scrollPadding?: number) {
 					removeSelection()
-					const match = matches[index]
-					const lines = editor.lines!
-					if (match) {
-						editor.setSelection(...match)
-						currentLine = lines[editor.activeLine]
+					if (matches[index]) {
+						setSelection(editor, ...matches[index])
+						currentLine = editor.lines![editor.activeLine]
 						currentMatch = search.container.children[index] as HTMLSpanElement
 						hasSelected = true
 						toggleClasses()

@@ -1,17 +1,11 @@
 import { useEffect } from "react"
-import {
-	addTextareaListener,
-	isChrome,
-	isMac,
-	isWebKit,
-	numLines,
-	preventDefault,
-} from "../../core"
+import { addTextareaListener, numLines, preventDefault } from "../../core"
 import { InputSelection, PrismEditor } from "../../types"
 import { useEditorReplace } from "./replace"
 import { getModifierCode, regexEscape } from "../../utils"
 import { getStyleValue } from "../../utils/other"
 import { createTemplate, getLineEnd, getLineStart } from "../../utils/local"
+import { isMac, isWebKit } from "../../utils"
 
 const shortcut = ` (Alt+${isMac ? "Cmd+" : ""}`
 
@@ -258,16 +252,6 @@ const useSearchWidget = (editor: PrismEditor) => {
 				},
 			],
 		])
-
-		// Patches a bug where Chrome lies about the textarea's selection
-		if (isChrome) {
-			searchContainer.addEventListener("focusin", e => {
-				if (!searchContainer.contains(e.relatedTarget as Element)) {
-					findInput.focus()
-					;(e.target as HTMLElement).focus()
-				}
-			})
-		}
 
 		searchContainer.addEventListener("click", e => {
 			const target = e.target as HTMLElement

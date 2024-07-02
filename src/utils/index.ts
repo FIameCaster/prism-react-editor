@@ -1,4 +1,4 @@
-import { addTextareaListener, numLines, isChrome, isWebKit } from "../core"
+import { addTextareaListener, numLines, selectionChange } from "../core"
 import { PrismEditor, InputSelection } from "../types"
 import { getLineEnd, getLineStart } from "./local.ts"
 
@@ -165,6 +165,46 @@ const getModifierCode = (
 	e: KeyboardEvent, // @ts-expect-error Allow automatic type coercion
 ): number => e.altKey + e.ctrlKey * 2 + e.metaKey * 4 + e.shiftKey * 8
 
+const userAgent = navigator.userAgent
+const isMac = /Mac|iPhone|iPod|iPad/i.test(navigator.platform)
+const isChrome = /Chrome\//.test(userAgent)
+const isWebKit = !isChrome && /AppleWebKit\//.test(userAgent)
+
+/**
+ * Sets the selection for the `textarea` and synchronously runs the selectionChange listeners.
+ * If you don't want to synchronously run the listeners, use `textarea.setSelectionRange` instead.
+ * @param editor Editor you want to change the selection of.
+ * @param start New selectionStart.
+ * @param end New selectionEnd. Defaults to `start`.
+ * @param direction New direction.
+ */
+const setSelection = (
+	editor: PrismEditor,
+	start: number,
+	end = start,
+	direction?: "backward" | "forward" | "none",
+) => {
+	let focused = editor.focused
+	let textarea = editor.textarea!
+	let relatedTarget!: HTMLElement | null
+	if (!focused) {
+		addTextareaListener(
+			editor,
+			"focus",
+			e => {
+				relatedTarget = e.relatedTarget as HTMLElement
+			},
+			{ once: true },
+		)
+		textarea.focus()
+	}
+	textarea.setSelectionRange(start, end, direction)
+
+	// Blurs the textarea if it wasn't focused before and calls `selectionChange` with `true`
+	// This will set `selectionChange` to null, so we must access the variable before
+	selectionChange!(!(!focused && (relatedTarget ? relatedTarget.focus() : textarea.blur())))
+}
+
 export {
 	regexEscape,
 	getLineBefore,
@@ -173,5 +213,9 @@ export {
 	getLanguage,
 	insertText,
 	getModifierCode,
+	setSelection,
+	isChrome,
+	isWebKit,
+	isMac,
 	prevSelection,
 }

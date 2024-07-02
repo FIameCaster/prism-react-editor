@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { addTextareaListener, isMac, languageMap, preventDefault } from "../core"
+import { addTextareaListener, languageMap, preventDefault } from "../core"
 import { InputCommandCallback, InputSelection, KeyCommandCallback, PrismEditor } from "../types"
 import {
 	getLanguage,
@@ -9,6 +9,8 @@ import {
 	insertText,
 	prevSelection,
 	regexEscape,
+	isMac,
+	setSelection,
 } from "../utils"
 import { getLineStart } from "../utils/local"
 
@@ -87,7 +89,7 @@ const useDefaultCommands = (
 			!insertText(editor, open + value.slice(start, end) + close, null, null, start + 1, end + 1)!
 
 		const skipIfEqual = ([start, end]: InputSelection, char: string, value: string) =>
-			start == end && value[end] == char && !editor.setSelection(start + 1)!
+			start == end && value[end] == char && !setSelection(editor, start + 1)!
 
 		/**
 		 * Inserts slightly altered lines while keeping the same selection.
