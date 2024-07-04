@@ -174,6 +174,7 @@ const useReadOnlyCodeFolding = (editor: PrismEditor, ...providers: FoldingRangeP
 		foldPositions = []
 		foldedRanges.clear()
 		foldedLines.clear()
+		lines = editor.lines!
 		value = code = editor.value
 		lineNumberWidth = Math.ceil(Math.log10(numLines(code))) + ".001ch"
 		const folds: [number, number][] = []
@@ -212,36 +213,38 @@ const useReadOnlyCodeFolding = (editor: PrismEditor, ...providers: FoldingRangeP
 
 	providerRef.current = providers
 
-	useLayoutEffect(() => {
-		editor.extensions.folding = {
-			get fullCode() {
-				return code
-			},
-			toggleFold: (lineNumber, force) =>
-				!!foldPositions[lineNumber] &&
-				foldedLines.has(lineNumber) != force &&
-				!toggleFold(lineNumber)!,
-			updateFolds: () => update(),
-		}
-
-		lines = editor.lines!
-		if (editor.value) createFolds()
-
-		return () => {
-			delete editor.extensions.folding
-			if (foldToggles) {
-				foldToggles.forEach((el, i) => {
-					el.remove()
-					foldPlaceholders[i]?.remove()
-				})
+	useLayoutEffect(
+		useCallback(() => {
+			editor.extensions.folding = {
+				get fullCode() {
+					return code
+				},
+				toggleFold: (lineNumber, force) =>
+					!!foldPositions[lineNumber] &&
+					foldedLines.has(lineNumber) != force &&
+					!toggleFold(lineNumber)!,
+				updateFolds: () => update(),
 			}
-			if (foldedRanges.size) {
-				foldedRanges.clear()
-				foldPositions = []
-				update()
+
+			if (editor.value) createFolds()
+
+			return () => {
+				delete editor.extensions.folding
+				if (foldToggles) {
+					foldToggles.forEach((el, i) => {
+						el.remove()
+						foldPlaceholders[i]?.remove()
+					})
+				}
+				if (foldedRanges.size) {
+					foldedRanges.clear()
+					foldPositions = []
+					update()
+				}
 			}
-		}
-	}, [])
+		}, []),
+		[],
+	)
 
 	useLayoutEffect(
 		useCallback(() => {

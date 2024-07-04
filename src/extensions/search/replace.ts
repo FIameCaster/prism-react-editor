@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo } from "react"
+import { useCallback, useLayoutEffect, useMemo } from "react"
 import { addTextareaListener } from "../../core"
 import { PrismEditor } from "../../types"
 import { SearchAPI, useEditorSearch } from "./search"
@@ -61,24 +61,22 @@ export const useEditorReplace = (
 		currentMatch?.classList.toggle("match")
 	}
 
-	const removeSelection = () => {
+	const removeSelection = useCallback(() => {
 		if (hasSelected) {
 			toggleClasses()
 			hasSelected = false
 		}
-	}
+	}, [])
 
 	let currentLine: HTMLDivElement
 	let currentMatch: HTMLSpanElement
 	let hasSelected = false
 
 	useLayoutEffect(() => {
-		let removeListener = addTextareaListener(editor, "focus", removeSelection)
-		return () => {
-			removeListener()
-			removeSelection()
-		}
+		return addTextareaListener(editor, "focus", removeSelection)
 	}, [])
+
+	useLayoutEffect(() => removeSelection, [])
 
 	return useMemo<ReplaceAPI>(
 		() =>
