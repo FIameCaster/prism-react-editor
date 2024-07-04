@@ -153,12 +153,9 @@ const Editor = memo(
 			[],
 		)
 
-		// @ts-expect-error Allow assigning read-only property
-		editor.props = props = Object.assign({ language: "text", value: "" }, props)
-
-		useLayoutEffect(
-			useCallback(() => {
-				if (activeLine) return
+		const textareaRef = useCallback((el: HTMLTextAreaElement | null) => {
+			if (el && !textarea) {
+				editor.textarea = textarea = el
 
 				addTextareaListener(editor, "keydown", e => {
 					keyCommandMap[e.key]?.(e, getInputSelection(), value) && preventDefault(e)
@@ -187,9 +184,11 @@ const Editor = memo(
 					updateSelection()
 					preventDefault(e)
 				})
-			}, []),
-			[],
-		)
+			}
+		}, [])
+
+		// @ts-expect-error Allow assigning read-only property
+		editor.props = props = { language: "text", value: "", ...props }
 
 		// Using useCallback here so the effect function uses variables from the first closure
 		useLayoutEffect(
@@ -233,17 +232,13 @@ const Editor = memo(
 				>
 					<div className="pce-overlays">
 						<textarea
-							spellCheck={false}
+							spellCheck="false"
 							autoCapitalize="off"
 							autoComplete="off"
 							inputMode={props.readOnly ? "none" : "text"}
 							aria-readonly={props.readOnly}
 							{...props.textareaProps}
-							ref={useCallback((el: HTMLTextAreaElement | null) => {
-								if (el) {
-									editor.textarea = textarea = el
-								}
-							}, [])}
+							ref={textareaRef}
 						/>
 						{props.children?.(editor)}
 					</div>
@@ -286,11 +281,4 @@ document.addEventListener("selectionchange", () => selectionChange?.())
 let selectionChange: null | ((force?: true) => void)
 let handleSelectionChange = true
 
-export {
-	Editor,
-	addTextareaListener,
-	preventDefault,
-	languageMap,
-	selectionChange,
-	numLines,
-}
+export { Editor, addTextareaListener, preventDefault, languageMap, selectionChange, numLines }
