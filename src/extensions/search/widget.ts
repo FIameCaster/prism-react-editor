@@ -33,7 +33,7 @@ export interface SearchWidget {
 
 /**
  * Hook that adds a widget for search and replace functionality.
- * This requires styling from `react-prism-editor/search.css`.
+ * This requires styling from `prism-react-editor/search.css`.
  */
 const useSearchWidget = (editor: PrismEditor) => {
 	const replaceAPI = useEditorReplace(editor, "pce-matches")

@@ -22,7 +22,7 @@ import { PrismEditor } from "./types"
  * - {@link useCursorPosition}
  * - {@link IndentGuides}
  * 
- * Requires styling from `react-prism-editor/search.css` for the search widget
+ * Requires styling from `prism-react-editor/search.css` for the search widget
  */
 const BasicSetup = ({ editor }: { editor: PrismEditor }) => {
 	useBracketMatcher(editor)
@@ -51,8 +51,8 @@ const BasicSetup = ({ editor }: { editor: PrismEditor }) => {
  * 
  * Intended to be used with read-only editors.
  * 
- * Requires styling from `react-prism-editor/copy-button.css` for the copy button
- * and from `react-prism-editor/folding.css` for the code folding.
+ * Requires styling from `prism-react-editor/copy-button.css` for the copy button
+ * and from `prism-react-editor/code-folding.css` for the code folding.
  */
 const ReadOnlySetup = ({ editor }: { editor: PrismEditor }) => {
 	useBracketMatcher(editor)

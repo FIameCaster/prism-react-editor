@@ -10,7 +10,7 @@ const clipboard = navigator.clipboard
 
 /**
  * Hook that adds a copy button to the editor. Probably best used with a read-only editor.
- * Requires styles from `react-prism-editor/copy-button.css` to work.
+ * Requires styles from `prism-react-editor/copy-button.css` to work.
  */
 const useCopyButton = (editor: PrismEditor) => {
 	useEffect(() => {

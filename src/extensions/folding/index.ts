@@ -48,6 +48,8 @@ const isMultiline = (str: string, start: number, end: number) =>
  *
  * To fold bracket pairs, the {@link useBracketMatcher} hook needs to be added before.
  *
+ * Requires styling from `prism-react-editor/code-folding.css`.
+ *
  * @param providers Callbacks that can add extra foldable ranges.
  */
 const useReadOnlyCodeFolding = (editor: PrismEditor, ...providers: FoldingRangeProvider[]) => {
