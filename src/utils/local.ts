@@ -19,12 +19,14 @@ const getLineStart = (text: string, position: number) =>
 const getLineEnd = (text: string, position: number) =>
 	(position = text.indexOf("\n", position)) + 1 ? position : text.length
 
-const templateEl = /* @__PURE__ */ document.createElement("div")
+const templateEl = /* @__PURE__ */ globalThis.document?.createElement("div")
 
-const createTemplate = <T extends Element = HTMLDivElement>(html: string) => {
-	templateEl.innerHTML = html
-	const node = templateEl.firstChild!
-	return () => <T>node.cloneNode(true)
+const createTemplate = <T extends Element = HTMLDivElement>(html: string, node?: Node) => {
+	if (templateEl) {
+		templateEl.innerHTML = html
+		node = templateEl.firstChild!
+	}
+	return () => <T>node?.cloneNode(true)
 }
 
 export { scrollToEl, getLineStart, getLineEnd, createTemplate }

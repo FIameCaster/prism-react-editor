@@ -65,7 +65,8 @@ export interface SearchAPI {
  */
 export const useEditorSearch = (editor: PrismEditor, initClassName?: string, initZIndex?: number) => {
 	return useMemo<SearchAPI>(() => {
-		const nodes: ChildNode[] = [new Text()]
+		const Text = globalThis.Text
+		const nodes: ChildNode[] = Text ? [new Text()] : []
 		const nodeValues: string[] = []
 		const container = template()
 		const matchPositions: [number, number][] = []
@@ -79,8 +80,8 @@ export const useEditorSearch = (editor: PrismEditor, initClassName?: string, ini
 		let regex: RegExp
 		let nodeCount = 0
 
-		if (initClassName) container.className = initClassName
-		if (initZIndex) container.style.zIndex = initZIndex as any
+		if (initClassName && container) container.className = initClassName
+		if (initZIndex && container) container.style.zIndex = initZIndex as any
 
 		return {
 			search(str, caseSensitive, wholeWord, useRegExp, selection, filter, pattern) {

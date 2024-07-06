@@ -165,10 +165,11 @@ const getModifierCode = (
 	e: KeyboardEvent, // @ts-expect-error Allow automatic type coercion
 ): number => e.altKey + e.ctrlKey * 2 + e.metaKey * 4 + e.shiftKey * 8
 
-const userAgent = navigator.userAgent
-const isMac = /Mac|iPhone|iPod|iPad/i.test(navigator.platform)
-const isChrome = /Chrome\//.test(userAgent)
-const isWebKit = !isChrome && /AppleWebKit\//.test(userAgent)
+const navigator = globalThis.navigator
+const userAgent = navigator?.userAgent
+const isMac = navigator ? /Mac|iPhone|iPod|iPad/i.test(navigator.platform) : false
+const isChrome = navigator ? /Chrome\//.test(userAgent) : false
+const isWebKit = !!navigator && !isChrome && /AppleWebKit\//.test(userAgent)
 
 /**
  * Sets the selection for the `textarea` and synchronously runs the selectionChange listeners.

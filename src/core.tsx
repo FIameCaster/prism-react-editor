@@ -257,13 +257,13 @@ const preventDefault = (e: Event) => {
 }
 
 const addTextareaListener = <T extends keyof HTMLElementEventMap>(
-	editor: PrismEditor,
+	{ textarea }: PrismEditor,
 	type: T,
 	listener: (this: HTMLTextAreaElement, ev: HTMLElementEventMap[T]) => any,
 	options?: boolean | AddEventListenerOptions,
 ) => {
-	editor.textarea?.addEventListener(type, listener, options)
-	return () => editor.textarea?.removeEventListener(type, listener, options)
+	textarea?.addEventListener(type, listener, options)
+	return () => textarea?.removeEventListener(type, listener, options)
 }
 
 /**
@@ -276,7 +276,7 @@ const numLines = (str: string, start = 0, end = Infinity) => {
 	return count
 }
 
-document.addEventListener("selectionchange", () => selectionChange?.())
+globalThis.document?.addEventListener("selectionchange", () => selectionChange?.())
 
 let selectionChange: null | ((force?: true) => void)
 let handleSelectionChange = true

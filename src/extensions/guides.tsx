@@ -1,5 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useRef } from "react"
 import { PrismEditor } from "../types"
+import { createTemplate } from "../utils/local"
 
 /** Component adding indent guides to an editor. Does not work with word wrap. */
 export const IndentGuides = ({ editor }: { editor: PrismEditor }) => {
@@ -18,7 +19,7 @@ export const IndentGuides = ({ editor }: { editor: PrismEditor }) => {
 		const l = newIndents.length
 
 		for (let i = 0, prev: number[] = [], next = newIndents[0]; next; i++) {
-			const style = (lines[i] ||= guideTemplate.cloneNode() as HTMLDivElement).style
+			const style = (lines[i] ||= guideTemplate()).style
 			const [top, height, left] = next
 			const old = indents[i]
 
@@ -129,6 +130,6 @@ const getIndentCount = (text: string, tabSize: number) => {
 	return Math.ceil(result / tabSize)
 }
 
-const guideTemplate = document.createElement("div")
-// @ts-expect-error Allow assigning style
-guideTemplate.style = "width:1px;position:absolute;background:var(--bg-guide-indent)"
+const guideTemplate = createTemplate(
+	"<div style=width:1px;position:absolute;background:var(--bg-guide-indent)>",
+)

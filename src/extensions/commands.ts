@@ -26,7 +26,6 @@ const addCommand = <T extends KeyCommandCallback | InputCommandCallback>(
 	cleanups.push(() => delete commands[key])
 }
 
-const clipboard = navigator.clipboard
 const mod = isMac ? 4 : 2
 /**
  * Sets whether editors should ignore tab or use it for indentation.
@@ -66,6 +65,7 @@ const useDefaultCommands = (
 	useEffect(() => {
 		let prevCopy: string
 		const { keyCommandMap, inputCommandMap, getSelection } = editor
+		const clipboard = navigator.clipboard
 
 		const getIndent = ({ insertSpaces = true, tabSize } = editor.props) =>
 			[insertSpaces ? " " : "\t", insertSpaces ? tabSize || 2 : 1] as const
