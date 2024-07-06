@@ -43,7 +43,11 @@ You must already have `react` and `react-dom` version 16.8.0 or greater installe
 
 ## Examples
 
-Work in progress.
+- [Usage in forms](https://stackblitz.com/edit/vitejs-vite-6wmrpx?file=src%2FApp.tsx)
+- [Next.js example](https://stackblitz.com/edit/stackblitz-starters-8spwks?file=app%2Fcode-block.tsx,app%2Feditor.tsx,app%2Fpage.tsx)
+- [Preact example](https://stackblitz.com/edit/vitejs-vite-t88xmd?file=src%2Fapp.tsx)
+- [Relative line numbers](https://stackblitz.com/edit/vitejs-vite-d3zxwt?file=src%2FApp.tsx)
+- [Custom cursor](https://stackblitz.com/edit/vitejs-vite-cg3zpz?file=src%2FApp.tsx)
 
 ## Basic usage
 
