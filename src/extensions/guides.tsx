@@ -1,6 +1,7 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react"
+import { useLayoutEffect, useMemo, useRef } from "react"
 import { PrismEditor } from "../types"
 import { createTemplate } from "../utils/local"
+import { useStableRef } from "../core"
 
 /** Component adding indent guides to an editor. Does not work with word wrap. */
 export const IndentGuides = ({ editor }: { editor: PrismEditor }) => {
@@ -56,7 +57,7 @@ export const IndentGuides = ({ editor }: { editor: PrismEditor }) => {
 	const noWrap = !props.wordWrap
 
 	useLayoutEffect(
-		useCallback(() => {
+		useStableRef(() => {
 			const value = editor.value
 			const cleanup1 = editor.on("update", update)
 			const cleanup2 = editor.on("selectionChange", updateActive)
@@ -70,7 +71,7 @@ export const IndentGuides = ({ editor }: { editor: PrismEditor }) => {
 				cleanup1()
 				cleanup2()
 			}
-		}, []),
+		}),
 		[props.tabSize],
 	)
 

@@ -1,5 +1,5 @@
-import { useCallback, useLayoutEffect, useMemo } from "react"
-import { addTextareaListener } from "../../core"
+import { useLayoutEffect, useMemo } from "react"
+import { addTextareaListener, useStableRef } from "../../core"
 import { PrismEditor } from "../../types"
 import { SearchAPI, useEditorSearch } from "./search"
 import { scrollToEl } from "../../utils/local"
@@ -61,12 +61,12 @@ export const useEditorReplace = (
 		currentMatch?.classList.toggle("match")
 	}
 
-	const removeSelection = useCallback(() => {
+	const removeSelection = useStableRef(() => {
 		if (hasSelected) {
 			toggleClasses()
 			hasSelected = false
 		}
-	}, [])
+	})
 
 	let currentLine: HTMLDivElement
 	let currentMatch: HTMLSpanElement

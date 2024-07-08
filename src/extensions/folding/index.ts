@@ -1,5 +1,5 @@
-import { useCallback, useLayoutEffect, useRef } from "react"
-import { languageMap, numLines } from "../../core"
+import { useLayoutEffect, useRef } from "react"
+import { languageMap, numLines, useStableRef } from "../../core"
 import { PrismEditor } from "../../types"
 import { getLineBefore } from "../../utils"
 import { createTemplate, getLineEnd } from "../../utils/local"
@@ -172,7 +172,7 @@ const useReadOnlyCodeFolding = (editor: PrismEditor, ...providers: FoldingRangeP
 		update(line)
 	}
 
-	const createFolds = () => {
+	const createFolds = useStableRef(() => {
 		foldPositions = []
 		foldedRanges.clear()
 		foldedLines.clear()
@@ -211,12 +211,12 @@ const useReadOnlyCodeFolding = (editor: PrismEditor, ...providers: FoldingRangeP
 				foldPositions[index] = [start, end]
 		}
 		updateFolds()
-	}
+	})
 
 	providerRef.current = providers
 
 	useLayoutEffect(
-		useCallback(() => {
+		useStableRef(() => {
 			editor.extensions.folding = {
 				get fullCode() {
 					return code
@@ -244,15 +244,13 @@ const useReadOnlyCodeFolding = (editor: PrismEditor, ...providers: FoldingRangeP
 					update()
 				}
 			}
-		}, []),
+		}),
 		[],
 	)
 
-	useLayoutEffect(
-		useCallback(() => {
-			setTimeout(editor.on("update", createFolds))
-		}, []),
-	)
+	useLayoutEffect(() => {
+		setTimeout(editor.on("update", createFolds))
+	})
 }
 
 /**

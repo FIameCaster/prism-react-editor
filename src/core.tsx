@@ -8,7 +8,7 @@ import type {
 	EditorEventMap,
 } from "./types"
 import { TokenStream, highlightTokens, languages, tokenizeText } from "./prism"
-import { useLayoutEffect, useCallback, useMemo, memo, forwardRef, useImperativeHandle } from "react"
+import { useLayoutEffect, memo, forwardRef, useImperativeHandle, useRef } from "react"
 
 /**
  * The core editor component of the library.
@@ -75,7 +75,7 @@ const Editor = memo(
 			editor.props["on" + name[0].toUpperCase() + name.slice(1)]?.(...args, editor)
 		}
 
-		const updateClass = () => {
+		const updateClass = useStableRef(() => {
 			let props = editor.props
 			let [start, end] = getInputSelection()
 			let newClass = `prism-code-editor language-${language}${
@@ -84,7 +84,7 @@ const Editor = memo(
 				start < end ? "has" : "no"
 			}-selection${focused ? " pce-focus" : ""}${props.readOnly ? " pce-readonly" : ""}`
 			if (newClass != prevClass) container.className = prevClass = newClass
-		}
+		})
 
 		const update = () => {
 			value = textarea.value
@@ -123,37 +123,33 @@ const Editor = memo(
 			handleSelectionChange = false
 		}
 
-		const editor = useMemo(
-			() =>
-				({
-					inputCommandMap,
-					keyCommandMap,
-					extensions: {},
-					get value() {
-						return value
-					},
-					get focused() {
-						return focused
-					},
-					get tokens() {
-						return tokens
-					},
-					get activeLine() {
-						return activeLineNumber
-					},
-					on: (name, listener) => {
-						;(listeners[name] ||= new Set<any>()).add(listener)
-						return () => {
-							listeners[name]!.delete(listener)
-						}
-					},
-					update,
-					getSelection: getInputSelection,
-				} as PrismEditor),
-			[],
-		)
+		const editor = useStableRef({
+			inputCommandMap,
+			keyCommandMap,
+			extensions: {},
+			get value() {
+				return value
+			},
+			get focused() {
+				return focused
+			},
+			get tokens() {
+				return tokens
+			},
+			get activeLine() {
+				return activeLineNumber
+			},
+			on: (name, listener) => {
+				;(listeners[name] ||= new Set<any>()).add(listener)
+				return () => {
+					listeners[name]!.delete(listener)
+				}
+			},
+			update,
+			getSelection: getInputSelection,
+		} as PrismEditor)
 
-		const textareaRef = useCallback((el: HTMLTextAreaElement | null) => {
+		const textareaRef = useStableRef((el: HTMLTextAreaElement | null) => {
 			if (el && !textarea) {
 				editor.textarea = textarea = el
 
@@ -185,17 +181,16 @@ const Editor = memo(
 					preventDefault(e)
 				})
 			}
-		}, [])
+		})
 
 		// @ts-expect-error Allow assigning read-only property
 		editor.props = props = { language: "text", value: "", ...props }
 
-		// Using useCallback here so the effect function uses variables from the first closure
 		useLayoutEffect(
-			useCallback(() => {
+			useStableRef(() => {
 				const { value: newVal, language: newLang } = editor.props
 				if (newVal != prevVal) {
-					// Safari focuses the textarea when changing its value or selection when it's in the DOM
+					// Safari focuses the textarea when changing its value or selection if it's in the DOM
 					if (!focused) textarea.remove()
 					textarea.value = prevVal = newVal
 					textarea.selectionEnd = 0
@@ -203,19 +198,19 @@ const Editor = memo(
 				}
 				language = newLang
 				update()
-			}, []),
+			}),
 			[props.value, props.language],
 		)
 
-		useLayoutEffect(useCallback(updateClass, []))
+		useLayoutEffect(updateClass)
 
 		useImperativeHandle(ref, () => editor, [])
 
 		return (
 			<div
-				ref={useCallback((el: HTMLDivElement | null) => {
+				ref={useStableRef((el: HTMLDivElement | null) => {
 					if (el) editor.container = container = el
-				}, [])}
+				})}
 				style={{
 					...props.style,
 					tabSize: props.tabSize || 2,
@@ -223,12 +218,12 @@ const Editor = memo(
 			>
 				<div
 					className="pce-wrapper"
-					ref={useCallback((el: HTMLDivElement | null) => {
+					ref={useStableRef((el: HTMLDivElement | null) => {
 						if (el) {
 							editor.wrapper = el
 							editor.lines = lines = el.children as HTMLCollectionOf<HTMLDivElement>
 						}
-					}, [])}
+					})}
 				>
 					<div className="pce-overlays">
 						<textarea
@@ -266,6 +261,10 @@ const addTextareaListener = <T extends keyof HTMLElementEventMap>(
 	return () => textarea?.removeEventListener(type, listener, options)
 }
 
+const useStableRef = <T extends unknown>(value: T) => {
+	return useRef(value).current
+}
+
 /**
  * Counts number of lines in the string between `start` and `end`.
  * If start and end are excluded, the whole string is searched.
@@ -281,4 +280,12 @@ globalThis.document?.addEventListener("selectionchange", () => selectionChange?.
 let selectionChange: null | ((force?: true) => void)
 let handleSelectionChange = true
 
-export { Editor, addTextareaListener, preventDefault, languageMap, selectionChange, numLines }
+export {
+	Editor,
+	addTextareaListener,
+	preventDefault,
+	languageMap,
+	selectionChange,
+	numLines,
+	useStableRef,
+}
