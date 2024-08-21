@@ -277,9 +277,9 @@ const useDefaultCommands = (
 
 				if (code == mod && (keyCode == 221 || keyCode == 219)) {
 					indent(keyCode == 219, ...getLines(editor.value, start, end), start, end, ...getIndent())
-					return scroll()
-				}
-				if (code == (isMac ? 0b1010 : 0b0010) && keyCode == 77) {
+					scroll()
+					preventDefault(e)
+				} else if (code == (isMac ? 0b1010 : 0b0010) && keyCode == 77) {
 					setIgnoreTab(!ignoreTab)
 					preventDefault(e)
 				} else if ((keyCode == 191 && code == mod) || (keyCode == 65 && code == 9)) {
@@ -318,6 +318,7 @@ const useDefaultCommands = (
 									end + open.length + 1,
 								)
 							scroll()
+							preventDefault(e)
 						}
 					} else {
 						if (line) {
@@ -333,6 +334,7 @@ const useDefaultCommands = (
 							)
 							insertLines(lines, newLines, start1, end1, start, end)
 							scroll()
+							preventDefault(e)
 						} else if (block) {
 							const [open, close] = block
 							const insertionPoint = whitespaceEnd(lines[0])
@@ -358,6 +360,7 @@ const useDefaultCommands = (
 									: Math.min(Math.max(firstInsersion, end + diff), start1 + newText.length)
 							insertText(editor, newText, start1, end1, newStart, Math.max(newStart, newEnd))
 							scroll()
+							preventDefault(e)
 						}
 					}
 				} else if (code == 8 + mod && keyCode == 75) {
@@ -372,7 +375,8 @@ const useDefaultCommands = (
 						end1 + <any>!start1,
 						start1 + Math.min(column, newLineLen),
 					)
-					return scroll()
+					scroll()
+					preventDefault(e)
 				}
 			}),
 			...(["copy", "cut", "paste"] as const).map(type =>
