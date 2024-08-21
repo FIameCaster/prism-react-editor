@@ -451,6 +451,7 @@ const useEditHistory = (editor: PrismEditor, historyLimit = 999) => {
 		let prevInputType: string
 		let prevData: string | null
 		let isMerge: boolean
+		let prevTime: number
 
 		const getSelection = editor.getSelection
 		const extensions = editor.extensions
@@ -478,6 +479,7 @@ const useEditHistory = (editor: PrismEditor, historyLimit = 999) => {
 			addTextareaListener(editor, "beforeinput", e => {
 				let data = e.data
 				let inputType = e.inputType
+				let time = e.timeStamp
 
 				if (/history/.test(inputType)) {
 					setEditorState(sp + (inputType[7] == "U" ? -1 : 1))
@@ -485,14 +487,15 @@ const useEditHistory = (editor: PrismEditor, historyLimit = 999) => {
 				} else if (
 					!(isMerge =
 						allowMerge &&
-						prevInputType == inputType &&
-						e.isTrusted &&
-						!data?.includes("\n") &&
+						(prevInputType == inputType ||
+							(time - prevTime < 99 && inputType.slice(-4) == "Drop")) &&
+						!prevSelection &&
 						(data != " " || prevData == data))
 				) {
 					stack[sp][2] = prevSelection || getSelection()
 				}
 				isTyping = true
+				prevTime = time
 				prevData = data
 				prevInputType = inputType
 			}),
