@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { PrismEditor } from "../../types"
 import { regexEscape } from "../../utils"
 import { createTemplate } from "../../utils/local"
@@ -59,12 +59,12 @@ export interface SearchAPI {
 /**
  * Hook that allows searching the content of the editor and highlighting the matches.
  * The matches are appended to a container appended to the editors overlays.
- * @param initClassName Class name the container is initialized with. 
+ * @param initClassName Class name the container is initialized with.
  * @param initZIndex Z-index the container is initialized with.
  * @returns Object with methods and properties for searching.
  */
 const useEditorSearch = (editor: PrismEditor, initClassName?: string, initZIndex?: number) => {
-	return useMemo<SearchAPI>(() => {
+	const searcher = useMemo<SearchAPI>(() => {
 		const container = searchTemplate()
 		const nodes: ChildNode[] = [container?.firstChild!]
 		const nodeValues: string[] = [" "]
@@ -121,21 +121,21 @@ const useEditorSearch = (editor: PrismEditor, initClassName?: string, initZIndex
 						nodes[i++] = matchTemplate()
 						nodes[i++] = new Text()
 					}
-	
+
 					for (i = nodeCount - 1; i > l; ) nodes[i--].remove()
 					if (nodeCount <= l) container.append(...nodes.slice(nodeCount, l + 1))
-	
+
 					// Diffing from bottom to top as well should be better
 					let prevEnd = 0
 					for (i = 0; i < l; ++i) {
 						const [start, end] = matchPositions[i / 2]
 						const before = value.slice(prevEnd, start)
 						const match = value.slice(start, (prevEnd = end))
-	
+
 						if (before != nodeValues[i]) (<Text>nodes[i]).data = nodeValues[i] = before
 						if (match != nodeValues[++i]) (<Text>nodes[i].firstChild).data = nodeValues[i] = match
 					}
-	
+
 					;(<Text>nodes[l]).data = nodeValues[l] = value.slice(prevEnd)
 					if (!container.parentNode) editor.lines![0].append(container)
 					nodeCount = l + 1
@@ -149,6 +149,10 @@ const useEditorSearch = (editor: PrismEditor, initClassName?: string, initZIndex
 			stopSearch,
 		}
 	}, [])
+
+	useEffect(() => searcher.stopSearch, [])
+
+	return searcher
 }
 
 export { useEditorSearch, searchTemplate, matchTemplate }
