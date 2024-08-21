@@ -12,7 +12,7 @@ import {
 	isMac,
 	setSelection,
 } from "../utils"
-import { getLineStart } from "../utils/local"
+import { getLineEnd, getLineStart } from "../utils/local"
 import { getStyleValue } from "../utils/other"
 
 let ignoreTab = false
@@ -203,13 +203,13 @@ const useDefaultCommands = (
 			return scroll()
 		})
 
-		addCommand(cleanUps, keyCommandMap, "Enter", (e, selection, value) => {
+		addCommand(cleanUps, keyCommandMap, "Enter", (e, [start, end, dir], value) => {
 			const code = getModifierCode(e) & 7
 			if (!code || code == mod) {
-				if (code) selection[0] = selection[1] = getLines(value, selection[1])[2]
+				if (code) start = end = getLineEnd(value, dir > "f" ? end : start)
 				const [indentChar, tabSize] = getIndent()
-				const [start, end] = selection
-				const autoIndent = languageMap[getLanguage(editor)]?.autoIndent
+				const selection: InputSelection = [start, end, dir]
+				const autoIndent = languageMap[getLanguage(editor, start)]?.autoIndent
 				const indenationCount =
 					Math.floor(whitespaceEnd(getLineBefore(value, start)) / tabSize) * tabSize
 				const extraIndent = autoIndent?.[0]?.(selection, value, editor) ? tabSize : 0
