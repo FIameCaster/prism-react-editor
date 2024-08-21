@@ -48,21 +48,20 @@ export const useBracketMatcher = (
 	closingBrackets = ")]}",
 ) => {
 	useLayoutEffect(() => {
-		let bracketIndex = 0
+		let bracketIndex: number
+		let sp: number
+		const stack: [number, number][] = []
 		const brackets: Bracket[] = []
 		const pairMap: number[] = []
 
-		const matchRecursive = (tokens: TokenStream, position: number, level: number) => {
-			let stack: [number, number][] = []
-			let sp = 0
-			let token: string | Token
-			for (let i = 0; (token = tokens[i++]); ) {
+		const matchRecursive = (tokens: TokenStream, position: number) => {
+			for (let i = 0, token: string | Token; (token = tokens[i++]); ) {
 				let length = token.length
 				if (typeof token != "string") {
 					let content = token.content
 
 					if (Array.isArray(content)) {
-						matchRecursive(content, position, sp + level)
+						matchRecursive(content, position)
 					} else if ((token.alias || token.type) == "punctuation") {
 						let openingType = testBracket(content, openingBrackets, length - 1)
 						let closingType = openingType || testBracket(content, closingBrackets, length - 1)
@@ -82,8 +81,7 @@ export const useBracketMatcher = (
 									let [index, type] = stack[--i]
 									if (closingType == type) {
 										pairMap[(pairMap[bracketIndex] = index)] = bracketIndex
-										brackets[bracketIndex][2] = brackets[index][2] = i + level
-										sp = i
+										brackets[bracketIndex][2] = brackets[index][2] = sp = i
 										i = 0
 									}
 								}
@@ -97,8 +95,8 @@ export const useBracketMatcher = (
 		}
 
 		const cleanup = editor.on("tokenize", tokens => {
-			pairMap.length = brackets.length = bracketIndex = 0
-			matchRecursive(tokens, 0, 0)
+			pairMap.length = brackets.length = sp = bracketIndex = 0
+			matchRecursive(tokens, 0)
 			if (rainbowBrackets) {
 				for (let i = 0, bracket: Bracket; (bracket = brackets[i]); ) {
 					let alias = bracket[0].alias

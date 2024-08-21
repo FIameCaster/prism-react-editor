@@ -34,9 +34,9 @@ export interface TagMatcher {
 }
 
 /**
- * Hook that traverses the tokens, and matches tags together. This hook is for
+ * Hook that traverses the tokens, and matches tags together. This hook is required for
  * {@link useHighlightMatchingTags} and {@link useHighlightTagPunctuation} to work.
- * 
+ *
  * The extension can be accessed from `editor.extensions.matchTags` after layout effects
  * have been called.
  */
@@ -44,20 +44,23 @@ const useTagMatcher = (editor: PrismEditor) => {
 	useLayoutEffect(() => {
 		let code: string
 		let tagIndex: number
+		let sp: number
+
+		const stack: [number, string][] = []
 		const pairMap: number[] = []
 		const tags: Tag[] = []
 
 		const matchTags = (tokens: TokenStream, language: string, value: string) => {
 			code = value
-			tags.length = pairMap.length = tagIndex = 0
+			tags.length = pairMap.length = sp = tagIndex = 0
 			matchTagsRecursive(tokens, language, 0)
 		}
 
 		const matchTagsRecursive = (tokens: TokenStream, language: string, position: number) => {
 			let noVoidTags = voidlessLangs.includes(language)
-			let stack: [number, string][] = []
-			let sp = 0
-			for (let i = 0, l = tokens.length; i < l; ) {
+			let i = 0
+			let l = tokens.length
+			for (; i < l; ) {
 				const token = tokens[i++] as Token
 				const content = token.content
 				const length = token.length
