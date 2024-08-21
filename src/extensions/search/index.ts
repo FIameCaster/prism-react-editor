@@ -1,4 +1,5 @@
-export * from "./search"
+export { useEditorSearch } from "./search"
+export type { SearchAPI, SearchFilter } from "./search"
 export * from "./replace"
 export * from "./widget"
 export * from "./selection"

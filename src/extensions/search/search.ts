@@ -3,8 +3,8 @@ import { PrismEditor } from "../../types"
 import { regexEscape } from "../../utils"
 import { createTemplate } from "../../utils/local"
 
-const template = createTemplate(
-	'<div style="color:#0000;contain:strict;padding:0 var(--_pse) 0 var(--padding-left)" aria-hidden=true>',
+const searchTemplate = createTemplate(
+	'<div style="color:#0000;contain:strict;padding:0 var(--_pse) 0 var(--padding-left)" aria-hidden=true> ',
 )
 
 const matchTemplate = createTemplate<HTMLSpanElement>("<span> ")
@@ -63,12 +63,11 @@ export interface SearchAPI {
  * @param initZIndex Z-index the container is initialized with.
  * @returns Object with methods and properties for searching.
  */
-export const useEditorSearch = (editor: PrismEditor, initClassName?: string, initZIndex?: number) => {
+const useEditorSearch = (editor: PrismEditor, initClassName?: string, initZIndex?: number) => {
 	return useMemo<SearchAPI>(() => {
-		const Text = globalThis.Text
-		const nodes: ChildNode[] = Text ? [new Text()] : []
-		const nodeValues: string[] = []
-		const container = template()
+		const container = searchTemplate()
+		const nodes: ChildNode[] = [container?.firstChild!]
+		const nodeValues: string[] = [" "]
 		const matchPositions: [number, number][] = []
 		const stopSearch = () => {
 			if (matchPositions[0]) {
@@ -78,7 +77,7 @@ export const useEditorSearch = (editor: PrismEditor, initClassName?: string, ini
 		}
 
 		let regex: RegExp
-		let nodeCount = 0
+		let nodeCount = 1
 
 		if (initClassName && container) container.className = initClassName
 		if (initZIndex && container) container.style.zIndex = initZIndex as any
@@ -151,3 +150,5 @@ export const useEditorSearch = (editor: PrismEditor, initClassName?: string, ini
 		}
 	}, [])
 }
+
+export { useEditorSearch, searchTemplate, matchTemplate }

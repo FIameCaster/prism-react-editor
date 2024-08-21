@@ -26,12 +26,12 @@ export interface ReplaceAPI extends SearchAPI {
 	 * else the index of the closest match is returned.
 	 * If there's no selected match, the index of the closest match is returned.
 	 */
-	replace(value: string): number | undefined
+	replace(replacement: string): number | undefined
 	/**
 	 * Replaces all search matches with the specified string.
-	 * @param str String to replace all matches with.
+	 * @param replacement String to replace all matches with.
 	 */
-	replaceAll(value: string): void
+	replaceAll(replacement: string): void
 }
 
 /**
