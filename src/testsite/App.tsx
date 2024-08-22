@@ -12,12 +12,13 @@ import "../prism/languages/tsx"
 import "../prism/languages/jsdoc"
 import "./style.css"
 import "../extensions/search/search.css"
+import "../extensions/search/invisibles.css"
 import "../languages/jsx"
 import { useBracketMatcher } from "../extensions/match-brackets"
 import { useHightlightBracketPairs } from "../extensions/match-brackets/highlight"
 import { IndentGuides } from "../extensions/guides"
 import { PrismEditor } from "../types"
-import { useHighlightSelectionMatches } from "../extensions/search/selection"
+import { useHighlightSelectionMatches, useShowInvisibles } from "../extensions/search"
 import { useOverscroll } from "../extensions/overscroll"
 import { useHighlightMatchingTags, useTagMatcher } from "../extensions/match-tags"
 import { useDefaultCommands, useEditHistory } from "../extensions/commands"
@@ -65,9 +66,9 @@ const Extensions = ({ editor }: { editor: PrismEditor }) => {
 	useHighlightSelectionMatches(editor)
 	useCopyButton(editor)
 	useCursorPosition(editor)
+	useShowInvisibles(editor)
 	useAutoComplete(editor, {
 		filter: fuzzyFilter,
-		closeOnBlur: false
 	})
 	return (
 		<>
