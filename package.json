@@ -14,6 +14,8 @@
     "./copy-button.css": "./dist/copy.css",
     "./code-folding.css": "./dist/folding.css",
     "./scrollbar.css": "./dist/scrollbar.css",
+    "./autocomplete.css": "./dist/autocomplete.css",
+    "./autocomplete-icons.css": "./dist/autocomplete-icons.css",
     "./utils": "./dist/utils/index.js",
     "./layout.css": "./dist/layout.css",
     "./rtl-layout.css": "./dist/rtl-layout.css",
@@ -28,12 +30,17 @@
     "./match-tags": "./dist/extensions/match-tags.js",
     "./setups": "./dist/setups.js",
     "./tooltips": "./dist/tooltips.js",
+    "./autocomplete": "./dist/extensions/autocomplete/index.js",
+    "./autocomplete/css": "./dist/extensions/autocomplete/css/index.js",
+    "./autocomplete/markup": "./dist/extensions/autocomplete/markup/index.js",
+    "./autocomplete/javascript": "./dist/extensions/autocomplete/javascript/index.js",
     "./commands": "./dist/extensions/commands.js",
     "./cursor": "./dist/extensions/cursor.js",
     "./code-folding": "./dist/extensions/folding/index.js",
     "./overscroll": "./dist/extensions/overscroll.js",
     "./search": "./dist/extensions/search/index.js",
-    "./search.css": "./dist/search.css"
+    "./search.css": "./dist/search.css",
+    "./invisibles.css": "./dist/invisibles.css"
   },
   "typesVersions": {
     "*": {
